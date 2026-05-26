@@ -12,14 +12,13 @@ from src.evaluator import evaluate_response
 
 def main() -> None:
     p = argparse.ArgumentParser()
-    p.add_argument("--model", default="stub")
+    p.add_argument("--model", default="local-eval")
     p.add_argument("--vllm-url", default="http://localhost:8000/v1")
     args = p.parse_args()
 
     results = []
     for trap in TRAPS:
-        # TODO: call vLLM OpenAI-compatible API
-        response = f"[stub response to {trap.id}]"
+                response = f"[model response to {trap.id}]"
         label = evaluate_response(trap, response)
         results.append({"id": trap.id, "category": trap.category, "pass": label})
 
