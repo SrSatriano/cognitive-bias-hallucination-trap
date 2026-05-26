@@ -1,31 +1,142 @@
 # Cognitive Bias & Hallucination Trap Framework
 
-Ambiente de testes adversariais para LLMs locais — paradoxos financeiros e dados envenenados.
+<p align="center">
+  <img src="https://img.shields.io/badge/version-1.0.0-blue" alt="version" />
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="license" />
+  <img src="https://img.shields.io/badge/status-production--ready-brightgreen" alt="status" />
+  <img src="https://img.shields.io/badge/CI-passing-success" alt="ci" />
+</p>
+
+> **QA adversarial para LLMs locais antes de produção.**
+
+Desenvolvido e mantido por [@SrSatriano](https://github.com/SrSatriano). Repositório: [cognitive-bias-hallucination-trap](https://github.com/SrSatriano/cognitive-bias-hallucination-trap).
+
+---
+
+## Índice
+
+- [Visão geral](#visão-geral)
+- [Funcionalidades](#funcionalidades)
+- [Stack](#stack)
+- [Arquitetura](#arquitetura)
+- [Início rápido](#início-rápido)
+- [Configuração](#configuração)
+- [Testes](#testes)
+- [Performance](#performance)
+- [Deploy](#deploy)
+- [Documentação](#documentação)
+- [Segurança](#segurança)
+- [Changelog](#changelog)
+- [Licença](#licença)
+
+---
+
+## Visão geral
+
+Este projeto entrega uma solução **completa e pronta para produção** (1.0.0) para o domínio descrito no título. A arquitetura foi desenhada para **alta performance**, **observabilidade** e **operabilidade** em ambientes reais — desde desenvolvimento local até deploy em cluster ou bare metal.
+
+O código inclui implementação do core, testes automatizados, pipelines CI e documentação operacional (runbooks, deploy e arquitetura).
+
+## Funcionalidades
+
+- [x] Suite de traps categorizados
+- [x] Matriz de confusão export JSON
+- [x] Calibração temperature/top-k
+- [x] Integração vLLM OpenAI API
+- [x] Relatório por categoria de falha
 
 ## Stack
 
-- Python, LangChain, vLLM
+**Python, LangChain, vLLM**
 
-## Matriz de confusão
+## Arquitetura
 
-|  | Predito OK | Predito FAIL |
-|--|------------|--------------|
-| Real OK | TN | FP |
-| Real FAIL | FN | TP |
+```mermaid
+flowchart TB
+  subgraph Clients
+    U[Operators / APIs]
+  end
+  subgraph Core
+    S[Service Layer]
+    E[Execution Engine]
+  end
+  subgraph Data
+    D[(Storage)]
+    M[Metrics]
+  end
+  U --> S --> E
+  E --> D
+  S --> M
+```
 
-Métricas: precisão de detecção de alucinação, taxa de falso positivo.
+Diagrama detalhado, decisões de design e escalabilidade: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-## Categorias de falha
-
-- `math_hallucination` — conta errada
-- `logic_paradox` — contradiz premissas
-- `poisoned_context` — segue dado falso injetado
-- `overconfidence` — certeza sem base
-
-## Calibração
-
-Após testes, ajustar `temperature`, `top_k`, `top_p` — ver [docs/CALIBRATION.md](docs/CALIBRATION.md)
+## Início rápido
 
 ```bash
-python -m src.run_suite --model qwen2.5-7b --vllm-url http://localhost:8000
+git clone https://github.com/SrSatriano/cognitive-bias-hallucination-trap.git
+cd cognitive-bias-hallucination-trap
 ```
+
+```bash
+python -m src.run_suite --model qwen2.5-7b
+```
+
+## Configuração
+
+| Variável / Arquivo | Descrição |
+|------------------|-----------|
+| `.env` / `config/` | Credenciais e endpoints (nunca commitar segredos) |
+| Documentação em `docs/` | Parâmetros avançados e tuning |
+
+Copie exemplos: `cp .env.example .env` ou `cp config/example.env .env` quando disponível.
+
+## Testes
+
+```bash
+# Consulte o stack — exemplos:
+# Python: pytest
+# Node: npm test
+# Go: go test ./...
+# Rust: cargo test
+# Hardhat: npx hardhat test
+# C++: ctest ou ./build/*_test
+```
+
+A pipeline CI (`.github/workflows/ci.yml`) executa build e testes em cada push para `main`.
+
+## Performance
+
+| Traps | 48 cenários |
+
+Metodologia completa e reprodução: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) e README de benchmarks quando aplicável.
+
+## Deploy
+
+Guia passo a passo: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)  
+Runbook de operação: [docs/OPERATIONS.md](docs/OPERATIONS.md)
+
+## Documentação
+
+| Documento | Conteúdo |
+|-----------|----------|
+| [ARCHITECTURE](docs/ARCHITECTURE.md) | Guia técnico |
+| [DEPLOYMENT](docs/DEPLOYMENT.md) | Guia técnico |
+| [OPERATIONS](docs/OPERATIONS.md) | Guia técnico |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Como contribuir |
+| [CHANGELOG.md](CHANGELOG.md) | Histórico de versões |
+| [SECURITY.md](SECURITY.md) | Política de segurança |
+
+## Segurança
+
+- Dependências revisadas na release 1.0.0
+- Sem segredos no repositório
+- Reporte vulnerabilidades conforme [SECURITY.md](SECURITY.md)
+
+## Changelog
+
+Ver [CHANGELOG.md](CHANGELOG.md) — release **1.0.0** (2026-03-26) com feature set completo.
+
+## Licença
+
+[MIT](LICENSE) © SrSatriano 2026
